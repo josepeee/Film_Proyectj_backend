@@ -1,18 +1,20 @@
 
 const User = require("../models/userModels");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt"); // una libreria que nos ayuda encriptar las contraseñas..
 const jwt = require("jsonwebtoken");
+const { generateToken } = require("../util")
 
+
+//se utiliza para registrar nuevos usuarios
 const addUser = async (req, res) => {
     try {
-        const { name, email, password, age, rol } = req.body;
+        const { name, email, password, age, role } = req.body;
         const user = new User({
             name: name,
             email: email,
-            password: await bcrypt.has(password, 10),
+            password: await bcrypt.hash(password,10),
             age: age,
             role: role,
-            favorites: favorites,
         });
 
         await user.save();
@@ -35,6 +37,7 @@ const addUser = async (req, res) => {
     }
 };
 
+// se utiliza para autenticar a los usuarios que intentan iniciar sesión
 const login = async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -48,33 +51,21 @@ const login = async (req, res) => {
         if (validPassword) {
           //TODO: GENERAR TOKEN
   
-          const payload = {
+          const payload= {
             userId: user._id,
             nombre: user.name,
             email: user.email,
             role: user.role,
+           
           };
-          // const token = generarteToken(payload, false);
-          // const token_refresh = generarteToken(payload, true);
-          process.env.token_secret,
-            { expiresIn: "1min" }
-  
-  
-          // / token de regresco  es igual que el de arriba pero cambia el tiempo de expireIn......
-          const token_refresh = jwt.sign({
-            userId: user._id,
-            nombre: user.name,
-            email: user.email,
-  
-          },
-            process.env.token_refresh,
-            { expiresIn: "5min" })
-  
+          const token = generateToken(payload, false);
+          const token_refresh = generateToken(payload, true);
+          
           return res.status(200).json({
             status: "succeeded",
             data: user,
             token: token,
-            token_refresh
+            token_refresh: token_refresh,
           });
         } else {
           return res.status(200).json({
@@ -100,3 +91,6 @@ const login = async (req, res) => {
   
 
 module.exports = { addUser, login }
+
+
+// https://api.themoviedb.org/3//movie/now_playing?language=es-ES&api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&page=1

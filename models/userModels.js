@@ -23,10 +23,14 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
-  favorites: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Movie' // Suponiendo que 'Movie' es el modelo de mongoose para las películas
-  }]
+  favorites: {
+    type: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Movie'
+    }],
+    default: [] // Valor predeterminado: una lista vacía de favoritos nos ayuda a crear un usuario sin añadir el este campo.
+  }
+  
 });
 
 const User = mongoose.model("User", userSchema);

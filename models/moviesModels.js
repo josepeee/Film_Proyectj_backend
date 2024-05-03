@@ -3,24 +3,38 @@ const mongoose = require("mongoose");
 const movieSchema = new mongoose.Schema({
     id: {
         type: String,
-        require: true,
+        required: true,
     },
     title: {
-        type: string,
-        require: true,
+        type: String,
+        required: true,
     },
     description: {
-        type: string,
-        require: true,
+        type: String,
+        required: true,
     },
     posterUrl: {
-        type: string,
-        require: true,
-    }, 
-    adult:{
-        
+        type: String,
+        required: true,
+    },
+    adult: {
+        type: Boolean,
+        default: false, // Por defecto, se asume que la película no es para adultos
+    },
+    popularity: {
+        type: Number,
+        default: 0, // Por defecto, la popularidad es 0 si no hay comentarios
+    },
+    creationDate: {
+        type: Date,
+        default: Date.now, // Por defecto, la fecha de creación es la fecha actual
+    },
+    average: {
+        type: Number,
+        default: 0, // Por defecto, la puntuación media es 0 si no hay comentarios
     }
-
 });
 
-module.exports = movies;
+const Movie = mongoose.model('Movie', movieSchema);
+
+module.exports = Movie;
