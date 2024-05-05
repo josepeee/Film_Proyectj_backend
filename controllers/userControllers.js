@@ -2,7 +2,8 @@
 const User = require("../models/userModels");
 const bcrypt = require("bcrypt"); // una libreria que nos ayuda encriptar las contraseñas..
 const jwt = require("jsonwebtoken");
-const { generateToken } = require("../util")
+const { generateToken } = require("../utils/util");
+const { error } = require("console");
 
 
 //se utiliza para registrar nuevos usuarios
@@ -51,7 +52,7 @@ const login = async (req, res) => {
         if (validPassword) {
           //TODO: GENERAR TOKEN
   
-          const payload= {
+          const payload = {
             userId: user._id,
             nombre: user.name,
             email: user.email,
@@ -87,10 +88,38 @@ const login = async (req, res) => {
       });
     };
 };
+
+const refreshToken = (req,res) => {
+  try {
+     const payload = req.payload;
+     if(!payload) return res.status(401).json({ error: "Access denied" });
+      const user = { 
+        userId: payload.userId,
+        name: payload.name,
+        email: payload.email,
+         };
+     const token = generateToken(user, false);
+     const token_refresh = generateToken(user, true);
+
+     res.status(200).json({
+      status: "succeeded",
+      data: {
+        token,
+        token_refresh,
+      },
+     });
+  } catch (error){
+    res.status(400).json({
+      status: "Error",
+      message: "Expired Token",
+      error: error.message
+    });
+  }
+};
   
   
 
-module.exports = { addUser, login }
+module.exports = { addUser, login, refreshToken }
 
 
 // https://api.themoviedb.org/3//movie/now_playing?language=es-ES&api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&page=1
