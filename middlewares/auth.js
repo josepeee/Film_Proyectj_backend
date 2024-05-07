@@ -30,5 +30,5 @@ const verifyRole = (req, res, next) => {
       res.status(400).send("Expired token");
     }
   };
-  
-module.exports = verifyToken, verifyRole;
+
+module.exports = {verifyToken, verifyRole};

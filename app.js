@@ -33,7 +33,6 @@ db.on("disconected", () => {
 
 app.use("/movies", moviesRouters); // Rutas relacionadas con las películas
 app.use("/User", userRouters); // Rutas relacionadas con los usuarios
-
 app.listen(PORT, () => {
     console.log(`Server running in http://localhost:${PORT}`);
 });

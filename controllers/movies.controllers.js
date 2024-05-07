@@ -3,6 +3,8 @@ const Movie = require("../models/moviesModels");
 const mongoose = require('mongoose');
 
 
+
+
 // Función asincrónica para obtener todas las peliculas
 const getetALLMovies = async (req, res) => {
     try { 
@@ -42,7 +44,7 @@ const getetALLMovies = async (req, res) => {
 const getMoviesByd = async (req, res) => {
     try {
         // Obtener el ID de la película de los parámetros de la solicitud
-        const movieId = req.payload.id;
+        const movieId = req.params.id;
 
         // Buscar la película en la base de datos por su ID
         const movie = await Movie.findById(movieId);
@@ -59,15 +61,6 @@ const getMoviesByd = async (req, res) => {
         // Imprimir en la consola la película encontrada (opcional)
         console.log(movie);
 
-        // Verificar si la película encontrada es un objeto vacío
-        if (!movie) {
-            // Enviar una respuesta con estado 200 indicando que no hay datos
-            return res.status(200).json({
-                status: "success",
-                message: "No hay datos",
-            });
-        }
-
         // Enviar una respuesta con estado 200 y la película encontrada
         res.status(200).json({
             status: "success",
@@ -82,7 +75,6 @@ const getMoviesByd = async (req, res) => {
         });
     }
 };
-
 
 // Función para obtener las películas recientes
 const getRecentMovies = async (req, res) => {
@@ -116,7 +108,7 @@ const getRecentMovies = async (req, res) => {
 
 
 // Funcion para obtener las 10 mejores peliculas mejor valoradas
-const getMostPopularMovies =async (req, res) => {
+const getMostPopularMovies = async (req, res) => {
     try {   const movies = await Movie.find().sort({ average: -1}).limit(10);
            
             if(movies.length === 0){
@@ -140,11 +132,44 @@ const getMostPopularMovies =async (req, res) => {
     }
 };
 
+//obtener las lista de peliculas favoritas del usuario
+const getUserFavoriteMovies = async (req, res) => {
+    try {
+        // la información de autenticación del usuario
+        const userId = req.user.id; // acceder al ID del usuario desde la información de autenticación
+        
+        // las películas favoritas del usuario en la base de datos
+        const userFavorites = await User.findById(userId).select('favoriteMovies').populate('favoriteMovies');
+        
+        // Verificar si el usuario tiene películas favoritas
+        if (!userFavorites || userFavorites.favoriteMovies.length === 0) {
+            return res.status(200).json({
+                status: 'success',
+                message: 'El usuario no tiene películas favoritas',
+                data: []
+            });
+        }
+
+        // Si el usuario tiene películas favoritas, las devuelves en la respuesta
+        res.status(200).json({
+            status: 'success',
+            message: 'Lista de películas favoritas del usuario',
+            data: userFavorites.favoriteMovies
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al obtener las películas favoritas del usuario',
+            error: error.message
+        });
+    }
+};
 
 module.exports = {
     getetALLMovies,
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
+    getUserFavoriteMovies
     
 };
