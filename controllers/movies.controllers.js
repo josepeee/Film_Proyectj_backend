@@ -170,11 +170,13 @@ const getUserFavoriteMovies = async (req, res) => {
 
 
 
+
+
 module.exports = {
     getetALLMovies,
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
-    getUserFavoriteMovies
+    getUserFavoriteMovies,
 
 };

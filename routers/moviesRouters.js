@@ -4,10 +4,10 @@ const {
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
-    getUserFavoriteMovies
+    getUserFavoriteMovies,
 
 } = require("../controllers/movies.controllers");
-const { refreshToken } = require("../controllers/userControllers");
+const { refreshToken, postMoviesFavorites } = require("../controllers/userControllers");
 const { verifyToken, verifyRole } = require("../middlewares/auth");
 
 // Sacar el listado de peliculas
@@ -27,6 +27,6 @@ router.get("/:id", getMoviesByd); //funciona
 router.get("/user/favorite",verifyToken, verifyToken, getUserFavoriteMovies);
 
 // para añadir peliculas a favoritos
-router.post("/user/:idMovie/favorite",)
+router.post("/user/:idMovie/favorite",verifyToken, verifyRole,  postMoviesFavorites);
 
 module.exports = router;
