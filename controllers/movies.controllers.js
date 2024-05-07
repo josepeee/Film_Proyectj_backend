@@ -1,15 +1,15 @@
 const Module = require("module");
 const Movie = require("../models/moviesModels");
 const mongoose = require('mongoose');
-
+const User = require("../models/userModels")
 
 
 
 // Función asincrónica para obtener todas las peliculas
 const getetALLMovies = async (req, res) => {
-    try { 
+    try {
 
-       
+
         // Buscar todas las peliculas en la base de datos
         const movies = await Movie.find();
 
@@ -24,7 +24,7 @@ const getetALLMovies = async (req, res) => {
                 message: "No hay Peliculas",
             });
         }
-        
+
         // Enviar una respuesta con estado 200 y las peliculas encontrados
         res.status(200.).json({
             status: "success",
@@ -109,18 +109,19 @@ const getRecentMovies = async (req, res) => {
 
 // Funcion para obtener las 10 mejores peliculas mejor valoradas
 const getMostPopularMovies = async (req, res) => {
-    try {   const movies = await Movie.find().sort({ average: -1}).limit(10);
-           
-            if(movies.length === 0){
-                return res.status(404).json({
-                    status: "error",
-                    message: "No se encontraton peliculas",
-                });
-            }
-            res.status(200).json({
-                status: "success",
-                data: movies,
+    try {
+        const movies = await Movie.find().sort({ average: -1 }).limit(10);
+
+        if (movies.length === 0) {
+            return res.status(404).json({
+                status: "error",
+                message: "No se encontraton peliculas",
             });
+        }
+        res.status(200).json({
+            status: "success",
+            data: movies,
+        });
 
     } catch (error) {
         res.status(400).json({
@@ -136,13 +137,14 @@ const getMostPopularMovies = async (req, res) => {
 const getUserFavoriteMovies = async (req, res) => {
     try {
         // la información de autenticación del usuario
-        const userId = req.user.id; // acceder al ID del usuario desde la información de autenticación
-        
+        const userId = req.payload.userId; // acceder al ID del usuario desde la información de autenticación
+
         // las películas favoritas del usuario en la base de datos
-        const userFavorites = await User.findById(userId).select('favoriteMovies').populate('favoriteMovies');
-        
+        const userFavorites = await User.findById(userId)
+        console.log(getUserFavoriteMovies)
+
         // Verificar si el usuario tiene películas favoritas
-        if (!userFavorites || userFavorites.favoriteMovies.length === 0) {
+        if (!userFavorites || userFavorites.favorites.length === 0) {
             return res.status(200).json({
                 status: 'success',
                 message: 'El usuario no tiene películas favoritas',
@@ -165,11 +167,14 @@ const getUserFavoriteMovies = async (req, res) => {
     }
 };
 
+
+
+
 module.exports = {
     getetALLMovies,
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
     getUserFavoriteMovies
-    
+
 };

@@ -26,11 +26,11 @@ const userSchema = new mongoose.Schema({
   favorites: {
     type: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Movie'
+      ref: 'movie'
     }],
     default: [] // Valor predeterminado: una lista vacía de favoritos nos ayuda a crear un usuario sin añadir el este campo.
   }
-  
+
 });
 
 const User = mongoose.model("User", userSchema);
