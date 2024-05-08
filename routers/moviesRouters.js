@@ -24,9 +24,9 @@ router.get("/most_popular", getMostPopularMovies);
 router.get("/:id", getMoviesByd); //funciona 
 
 //obtener las lista de peliculas favoritas del usuario
-router.get("/user/favorite",verifyToken, verifyToken, getUserFavoriteMovies);
+router.get("/user/favorite",verifyToken, verifyRole, getUserFavoriteMovies);
 
 // para añadir peliculas a favoritos
-router.post("/user/:idMovie/favorite",verifyToken, verifyRole,  postMoviesFavorites);
+router.post("/user/:idMovie/favorite",verifyToken, verifyRole, postMoviesFavorites);
 
 module.exports = router;

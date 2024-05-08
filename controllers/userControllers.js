@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt"); // una libreria que nos ayuda encriptar las co
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/util");
 const { error } = require("console");
-
+const movies = require("../models/moviesModels")
 
 //se utiliza para registrar nuevos usuarios
 const addUser = async (req, res) => {
@@ -97,6 +97,8 @@ const refreshToken = (req, res) => {
       userId: payload.userId,
       name: payload.name,
       email: payload.email,
+      role: payload.role,
+
     };
     const token = generateToken(user, false);
     const token_refresh = generateToken(user, true);
@@ -124,7 +126,7 @@ const postMoviesFavorites = async (req, res) => {
     const movieId = req.params.idMovie;
 
     // Verificar si la película existe
-    const movie = await movie.findById(movieId);
+    const movie = await movies.findById(movieId);
     if (!movie) {
       return res.status(404).json({ message: "Película no encontrada." });
     }
@@ -140,7 +142,7 @@ const postMoviesFavorites = async (req, res) => {
 
     res.status(200).json({
       message: "Película añadida a la lista de favoritos del usuario.",
-      data: User.favorites
+      data: req.User.favorites
     });
   } catch (error) {
     console.error(error);

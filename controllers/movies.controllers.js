@@ -141,7 +141,6 @@ const getUserFavoriteMovies = async (req, res) => {
 
         // las películas favoritas del usuario en la base de datos
         const userFavorites = await User.findById(userId)
-        console.log(getUserFavoriteMovies)
 
         // Verificar si el usuario tiene películas favoritas
         if (!userFavorites || userFavorites.favorites.length === 0) {
@@ -159,7 +158,7 @@ const getUserFavoriteMovies = async (req, res) => {
             data: userFavorites.favoriteMovies
         });
     } catch (error) {
-        res.status(500).json({
+        res.status(400).json({
             status: 'error',
             message: 'Error al obtener las películas favoritas del usuario',
             error: error.message
