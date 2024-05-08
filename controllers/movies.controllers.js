@@ -133,38 +133,6 @@ const getMostPopularMovies = async (req, res) => {
     }
 };
 
-//obtener las lista de peliculas favoritas del usuario
-const getUserFavoriteMovies = async (req, res) => {
-    try {
-        // la información de autenticación del usuario
-        const userId = req.payload.userId; // acceder al ID del usuario desde la información de autenticación
-
-        // las películas favoritas del usuario en la base de datos
-        const userFavorites = await User.findById(userId)
-
-        // Verificar si el usuario tiene películas favoritas
-        if (!userFavorites || userFavorites.favorites.length === 0) {
-            return res.status(200).json({
-                status: 'success',
-                message: 'El usuario no tiene películas favoritas',
-                data: []
-            });
-        }
-
-        // Si el usuario tiene películas favoritas, las devuelves en la respuesta
-        res.status(200).json({
-            status: 'success',
-            message: 'Lista de películas favoritas del usuario',
-            data: userFavorites.favoriteMovies
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: 'error',
-            message: 'Error al obtener las películas favoritas del usuario',
-            error: error.message
-        });
-    }
-};
 
 
 
@@ -176,6 +144,6 @@ module.exports = {
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
-    getUserFavoriteMovies,
+    
 
 };

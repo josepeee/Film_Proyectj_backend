@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt"); // una libreria que nos ayuda encriptar las co
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/util");
 const { error } = require("console");
-const movies = require("../models/moviesModels")
+const movies = require("../models/moviesModels");
+const { ADDRGETNETWORKPARAMS } = require("dns");
+
 
 //se utiliza para registrar nuevos usuarios
 const addUser = async (req, res) => {
@@ -119,38 +121,93 @@ const refreshToken = (req, res) => {
   }
 };
 
-const postMoviesFavorites = async (req, res) => {
+//obtener las lista de peliculas favoritas del usuario
+const getUserFavoriteMovies = async (req, res) => {
   try {
+      // la información de autenticación del usuario
+      const userId = req.payload.userId; // acceder al ID del usuario desde la información de autenticación
 
-    // Obtener el ID de la película desde los parámetros de la ruta
-    const movieId = req.params.idMovie;
+      // las películas favoritas del usuario en la base de datos
+      const userFavorites = await User.findById(userId)
 
-    // Verificar si la película existe
-    const movie = await movies.findById(movieId);
-    if (!movie) {
-      return res.status(404).json({ message: "Película no encontrada." });
-    }
+      // Verificar si el usuario tiene películas favoritas
+      if (!userFavorites || userFavorites.favorites.length === 0) {
+          return res.status(200).json({
+              status: 'success',
+              message: 'El usuario no tiene películas favoritas',
+              data: []
+          });
+      }
 
-    // Verificar si la película ya está en la lista de favoritos del usuario
-    if (rep.User.favorites.includes(movieId)) {
-      return res.status(400).json({ message: "La película ya está en la lista de favoritos del usuario." });
-    }
-
-    // Añadir la película a la lista de favoritos del usuario
-    req.User.favorites.push(movieId);
-    await req.User.save();
-
-    res.status(200).json({
-      message: "Película añadida a la lista de favoritos del usuario.",
-      data: req.User.favorites
-    });
+      // Si el usuario tiene películas favoritas, las devuelves en la respuesta
+      res.status(200).json({
+          status: 'success',
+          message: 'Lista de películas favoritas del usuario',
+          data: userFavorites.favoriteMovies
+      });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al añadir la película a favoritos del usuario." });
+      res.status(400).json({
+          status: 'error',
+          message: 'Error al obtener las películas favoritas del usuario',
+          error: error.message
+      });
   }
 };
 
-module.exports = { addUser, login, refreshToken, postMoviesFavorites }
+// para añadir peliculas a favoritos
+const postMoviesFavorites = async (req, res) => {
+  try {
+    const userId = req.payload.userId;
+    const movieId = req.params.id;
+    
+    const user = await User.findById(userId);
+
+    if(user.favorites.includes(movieId) === true){
+      return res.status(200).json({
+        status: "error",
+        message: "La pelicula ya esta añadida a favoritos"
+      })
+    }
+    user.favorites.push(movieId);
+    await user.save();
+    
+    return res.status(200).json({
+      status: "success",
+      data: user,
+    })
+    } catch (error) {
+      res.status(400).json({
+        status: "error",
+        message: "error al añadir a favoritos",
+        error: error.message,
+      })
+    }
+};
+ 
+//para borrar peliculas de favoritos
+
+const deleteMoviesFavorite = async (req, res) => {
+  try{ 
+    const movieId = req.params.id
+    const userId = req.payload.userId;
+    const user = await User.findById(userId);
+    user.favorites.pull(movieId);
+    await user.save();
+    res.status(200).json({
+      status: "success",
+      data: user,
+    })
+
+  } catch (error) {
+        res.status(400).json({
+          status: "error",
+          message: "error no al borrar de favoritos",
+          error: error,message,
+        })
+  }
+};
+
+module.exports = { addUser, login, refreshToken, postMoviesFavorites, deleteMoviesFavorite, getUserFavoriteMovies}
 
 
 // https://api.themoviedb.org/3//movie/now_playing?language=es-ES&api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&page=1
