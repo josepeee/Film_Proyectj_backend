@@ -4,8 +4,8 @@ const {
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
+    addMovie,
    
-
 } = require("../controllers/movies.controllers");
 const { refreshToken } = require("../controllers/userControllers");
 const { verifyToken, verifyRole } = require("../middlewares/auth");
@@ -22,5 +22,6 @@ router.get("/most_popular", getMostPopularMovies);
 // /Obtener documentos por ID para sacar los detalles de una pelicula
 router.get("/:id", getMoviesByd); //funciona 
 
-
+//añadir peliculas solos administrados 
+router.post("/",  verifyToken, addMovie)
 module.exports = router;

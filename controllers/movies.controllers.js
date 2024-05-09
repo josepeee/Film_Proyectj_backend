@@ -133,10 +133,29 @@ const getMostPopularMovies = async (req, res) => {
     }
 };
 
+// Añadir peliculas solo los administrados
 
+const addMovie = async (req,res) => {
+    try {
+        //verificar si el usuario que realiza la solicitud es admin
+          if (req.payload,role !== "adim"){
+            return res.status(403).json({message: "Aceso denegado. Esta accion esta para adniminstrados"})
+          }
 
+          //crear una nueva instancia de la pelicula 
+          const newMovie = new Movie(req.body);
+          
+          // guardo la nueva pelicula en la base de datos
+          await newMovie.save();
+        // Enviar la respuesta con estado 200 indicando que la pelicua se a agregado correctamente
+        res.status(200).json({ message: "La pelicula se agrego correctamen",
+          data: newMovie
+        });
 
-
+    } catch (error){
+        res.status(500).json({ message: "Error al agregar la pelicula"});
+    }
+};
 
 
 module.exports = {
@@ -144,6 +163,5 @@ module.exports = {
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
-    
-
+    addMovie
 };
