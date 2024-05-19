@@ -1,8 +1,7 @@
 const Module = require("module");
 const Movie = require("../models/moviesModels");
 const mongoose = require('mongoose');
-const User = require("../models/userModels")
-
+const User = require("../models/userModels");
 
 
 // Función asincrónica para obtener todas las peliculas
@@ -23,7 +22,7 @@ const getetALLMovies = async (req, res) => {
                 message: "No hay Peliculas",
             });
         }
-
+    
         // Enviar una respuesta con estado 200 y las peliculas encontrados
         res.status(200.).json({
             status: "success",

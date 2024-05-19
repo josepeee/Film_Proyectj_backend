@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/util");
 const { error } = require("console");
 const { ADDRGETNETWORKPARAMS } = require("dns");
+const sendEmail = require("../services/emailService");
 
 
 //se utiliza para registrar nuevos usuarios
@@ -22,7 +23,11 @@ const addUser = async (req, res) => {
 
     await user.save();
 
-
+//Mandar email cuando te registra
+await sendEmail(
+  "ivancodespace@gmail.com",
+  "joseantonioplaza777@gmail.com",
+  "Bienvenido a nuestra pagina");
     res.status(200).json({ status: "succeeded", data: user });
   } catch (error) {
     if (error.code === 1100) {

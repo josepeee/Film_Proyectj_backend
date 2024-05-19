@@ -7,42 +7,7 @@ const router = require("express").Router();
 
 router.post("/signup", addUser);
 router.post("/login", login);
-
-
-/**
- * @swagger
- * /movies:
- *    post:
- *         sumary: añadir peliculas a favoritos.
- *         desciption: Añadimos una pelicula a favoritos
- *         requestBody:
- *            requiered:true
- *             contend: 
- *                application/json:
- *                    schema:
- *                      type:object
- *                      properties:
- *                          id:
- *                            type:string
- *                             description:Id de la pelicula
- *                          title: 
- *                             type:string
- *                              description:titulo de la pelicula
- *                          description:
- *                               type:string
- *                                description:Description de la pelicula
- *                           posterUrl:
- *                               type:string
- *                                description:Poster de  la pelucula
- *                           date: 
- *                                 type:string 
- *                                  description:Fecha de la pelicula
- *         response:
- *            201:
- *              description: se a añadido correctamente la pelicula
- *            400: 
- *               description: Ha fallado la peticion de añadir pelicula
- */
+// Añadir peliculas a favoritos
 router.post("/:id/favorite",verifyToken, postMoviesFavorites);
 // Borrar peliculas de favoritos
 router.delete("/:id/favorite", verifyToken, deleteMoviesFavorite);
