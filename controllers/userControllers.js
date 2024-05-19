@@ -25,13 +25,15 @@ const addUser = async (req, res) => {
 
 //Mandar email cuando te registra
 await sendEmail(
-  "ivancodespace@gmail.com",
-  "joseantonioplaza777@gmail.com",
-  "Bienvenido a nuestra pagina");
+  email, //se envia el correo al nuevo usuario
+  "Bienvenido a nuestra pagina",
+  "Gracias por registrarte en nuestra pagina"
+);
     res.status(200).json({ status: "succeeded", data: user });
   } catch (error) {
-    if (error.code === 1100) {
-      return res.status(200).json({
+    //Manejar errores
+    if (error.code === 11000) { //El codigo esta duplicado 
+      return res.status(400).json({
         status: "Error",
         message: "El email ya existe",
       });
