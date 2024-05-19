@@ -9,7 +9,6 @@ const User = require("../models/userModels")
 const getetALLMovies = async (req, res) => {
     try {
 
-
         // Buscar todas las peliculas en la base de datos
         const movies = await Movie.find();
 
@@ -62,7 +61,7 @@ const getMoviesByd = async (req, res) => {
         console.log(movie);
 
         // Enviar una respuesta con estado 200 y la película encontrada
-        res.status(200).json({
+        res.status(204).json({
             status: "success",
             data: movie,
         });
@@ -85,7 +84,7 @@ const getRecentMovies = async (req, res) => {
         // Verificar si no se encontraron películas recientes
         if (recentMovies.length === 0) {
             // Enviar una respuesta con estado 404 indicando que no se encontraron películas recientes
-            return res.status(404).json({
+            return res.status(204).json({
                 status: "error",
                 message: "No se encontraron películas recientes",
             });
@@ -98,7 +97,7 @@ const getRecentMovies = async (req, res) => {
         });
     } catch (error) {
         // Manejar errores si la operación falla
-        res.status(500).json({
+        res.status(404).json({
             status: "error",
             message: "Hubo un error al obtener las películas recientes",
             error: error.message,
@@ -133,29 +132,6 @@ const getMostPopularMovies = async (req, res) => {
     }
 };
 
-// Añadir peliculas solo los administrados
-
-const addMovie = async (req,res) => {
-    try {
-        //verificar si el usuario que realiza la solicitud es admin
-          if (req.payload,role !== "adim"){
-            return res.status(403).json({message: "Aceso denegado. Esta accion esta para adniminstrados"})
-          }
-
-          //crear una nueva instancia de la pelicula 
-          const newMovie = new Movie(req.body);
-          
-          // guardo la nueva pelicula en la base de datos
-          await newMovie.save();
-        // Enviar la respuesta con estado 200 indicando que la pelicua se a agregado correctamente
-        res.status(200).json({ message: "La pelicula se agrego correctamen",
-          data: newMovie
-        });
-
-    } catch (error){
-        res.status(500).json({ message: "Error al agregar la pelicula"});
-    }
-};
 
 
 module.exports = {
@@ -163,5 +139,4 @@ module.exports = {
     getMoviesByd,
     getRecentMovies,
     getMostPopularMovies,
-    addMovie
 };

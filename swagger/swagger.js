@@ -1,5 +1,4 @@
 const swaggerJSDoc = require("swagger-jsdoc");
-const { serve } = require("swagger-ui-express");
 
 const options = {
     swaggerDefinition : {
@@ -14,7 +13,7 @@ const options = {
             description:"servidor local",
         },
     },
-    apis:[".routers/*.js"],
+    apis:["./routers/*.js"],
 };
 
 const swaggerSepc = swaggerJSDoc(options);

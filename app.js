@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const moviesRouters = require("./routers/moviesRouters"); // Importar el enrutador de películas
 const userRouters = require("./routers/userRouters"); // Importar el enrutador de usuarios
 require("dotenv").config(); // Cargar variables de entorno desde un archivo .env
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger/swagger");
 
 const PORT = 5000;
 
@@ -33,6 +35,7 @@ db.on("disconected", () => {
 
 app.use("/movies", moviesRouters); // Rutas relacionadas con las películas
 app.use("/User", userRouters); // Rutas relacionadas con los usuarios
+app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.listen(PORT, () => {
     console.log(`Server running in http://localhost:${PORT}`);
 });

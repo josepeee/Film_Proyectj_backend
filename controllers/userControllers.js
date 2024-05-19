@@ -1,10 +1,10 @@
 
 const User = require("../models/userModels");
+const Movie = require("../models/moviesModels")
 const bcrypt = require("bcrypt"); // una libreria que nos ayuda encriptar las contraseñas..
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/util");
 const { error } = require("console");
-const movies = require("../models/moviesModels");
 const { ADDRGETNETWORKPARAMS } = require("dns");
 
 
@@ -163,7 +163,7 @@ const postMoviesFavorites = async (req, res) => {
     const user = await User.findById(userId);
 
     if(user.favorites.includes(movieId) === true){
-      return res.status(200).json({
+      return res.status(201).json({
         status: "error",
         message: "La pelicula ya esta añadida a favoritos"
       })
@@ -207,7 +207,94 @@ const deleteMoviesFavorite = async (req, res) => {
   }
 };
 
-module.exports = { addUser, login, refreshToken, postMoviesFavorites, deleteMoviesFavorite, getUserFavoriteMovies}
+
+// Añadir peliculas solo los administrados
+
+const addMovie = async (req,res) => {
+  try {
+      //verificar si el usuario que realiza la solicitud es admin
+        if (req.payload,role !== "adim"){
+          return res.status(403).json({message: "Aceso denegado. Esta accion esta para adniminstrados"})
+        }
+
+        //crear una nueva instancia de la pelicula 
+        const newMovie = new Movie(req.body);
+        
+        // guardo la nueva pelicula en la base de datos
+        await newMovie.save();
+      // Enviar la respuesta con estado 200 indicando que la pelicua se a agregado correctamente
+      res.status(200).json({ message: "La pelicula se agrego correctamen",
+        data: newMovie
+      });
+
+  } catch (error){
+      res.status(500).json({ message: "Error al agregar la pelicula"});
+  }
+};
+
+// Borrar películas solo los administradores
+const deleteMovie = async (req, res) => {
+  try {
+      // Verificar si el usuario que realiza la solicitud es admin
+      if (req.payload.role !== "admin") {
+          return res.status(403).json({ message: "Acceso denegado. Esta acción es solo para administradores." });
+      }
+
+      // Obtener el ID de la película 
+      const movieId = req.params.id;
+
+      // Buscar y borrar la película en la base de datos
+      const deletedMovie = await Movie.findByIdAndDelete(movieId);
+
+      // Verificar si la película existe
+      if (!deletedMovie) {
+          return res.status(404).json({ message: "Película no encontrada." });
+      }
+
+      // Enviar la respuesta con estado 200 indicando que la película se ha borrado correctamente
+      res.status(200).json({
+          message: "La película se borró correctamente",
+          data: deletedMovie
+      });
+
+  } catch (error) {
+      res.status(500).json({ message: "Error al borrar la película" });
+  }
+};
+
+// Actualizar películas solo los administradores
+const updateMovie = async (req, res) => {
+  try {
+      // Verificar si el usuario que realiza la solicitud es admin
+      if (req.payload.role !== "admin") {
+          return res.status(403).json({ message: "Acceso denegado. Esta acción es solo para administradores." });
+      }
+
+      // Obtener el ID de la película a actualizar desde los parámetros de la solicitud
+      const movieId = req.params.id;
+
+      // Buscar y actualizar la película en la base de datos
+      const updatedMovie = await movie.findByIdAndUpdate(movieId, req.body, { new: true });
+
+      // Verificar si la película existe
+      if (!updatedMovie) {
+          return res.status(404).json({ message: "Película no encontrada." });
+      }
+
+      // Enviar la respuesta con estado 200 indicando que la película se ha actualizado correctamente
+      res.status(200).json({
+          message: "La película se actualizó correctamente",
+          data: updatedMovie
+      });
+
+  } catch (error) {
+      res.status(500).json({ message: "Error al actualizar la película" });
+  }
+};
+
+module.exports = { addUser, login, refreshToken, postMoviesFavorites, deleteMoviesFavorite, getUserFavoriteMovies,
+   addMovie, updateMovie , deleteMovie}
 
 
 // https://api.themoviedb.org/3//movie/now_playing?language=es-ES&api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&page=1
+
